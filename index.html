@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🏆 ProTrain — Твой Трекер Тренировок</title>
+    <!-- Подключение настоящих иконок соцсетей (Font Awesome) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Подключение внешних стилей CSS -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- ХЕДЕР -->
+    <header>
+        <h1>ProTrain Studio</h1>
+        <p>⚡ Преодолей себя сегодня. Результат будет завтра. ⚡</p>
+    </header>
+
+    <!-- НАВИГАЦИЯ -->
+    <nav>
+        <button onclick="switchPage('main')" id="nav-main" class="active">Главная</button>
+        <button onclick="switchPage('all-exercises')" id="nav-all-exercises">Все тренировки</button>
+        <button onclick="switchPage('profile')" id="nav-profile">Профиль</button>
+        <button onclick="switchPage('about')" id="nav-about">О нас</button>
+        <button onclick="switchPage('help')" id="nav-help">Помощь</button>
+    </nav>
+
+    <!-- ОСНОВНОЙ КОНТЕНТ -->
+    <div class="container">
+
+        <!-- 1. СТРАНИЦА: ГЛАВНАЯ -->
+        <div id="page-main" class="page active-page">
+            <div class="card">
+                <h2>Тренировки за день</h2>
+                <div id="today-list">
+                    <p style="color: var(--text-muted);">За сегодня тренировок пока нет.</p>
+                </div>
+            </div>
+            <button class="btn-main" onclick="openModal()">➕ Добавить упражнение</button>
+        </div>
+
+        <!-- 2. СТРАНИЦА: ВСЕ ТРЕНИРОВКИ -->
+        <div id="page-all-exercises" class="page">
+            <div class="card">
+                <h2>История прохождений</h2>
+                <div class="filters">
+                    <button class="btn-filter active" onclick="filterData('all', this)">Все</button>
+                    <button class="btn-filter" onclick="filterData('year', this)">За год</button>
+                    <button class="btn-filter" onclick="filterData('month', this)">За месяц</button>
+                    <button class="btn-filter" onclick="filterData('week', this)">За неделю</button>
+                    <button class="btn-filter" onclick="filterData('day', this)">За день</button>
+                </div>
+                <div id="history-list"></div>
+            </div>
+        </div>
+
+        <!-- 3. СТРАНИЦА: ПРОФИЛЬ -->
+        <div id="page-profile" class="page">
+            <div id="profile-logged-out" class="card auth-container">
+                <h2>Личный Кабинет</h2>
+                <p style="color: var(--text-muted);">Вы не вошли в систему.</p>
+                <button class="btn-main" onclick="document.getElementById('auth-methods-block').style.display = 'flex'">Войти</button>
+
+                <div id="auth-methods-block" style="display: none; flex-direction: column; gap: 10px; max-width: 300px; margin: 20px auto 0;">
+                    <button class="btn-filter" onclick="simulateLogin('Google')">🌐 Войти через Google</button>
+                    <input type="email" id="auth-email" placeholder="Введите Email">
+                    <button class="btn-filter" onclick="simulateLogin('Email')">📩 Код на Email</button>
+                    <input type="tel" id="auth-phone" placeholder="+992 11 250 4410">
+                    <button class="btn-filter" onclick="simulateLogin('Телефон')">📱 Код по SMS</button>
+                </div>
+            </div>
+
+            <div id="profile-logged-in" class="card" style="display: none;">
+                <h2>Ваш Профиль</h2>
+                <p>Выполнено упражнений: <strong id="profile-count">0</strong></p>
+                <button class="btn-main" style="background: #ef4444; color: white;" onclick="logout()">Выйти</button>
+            </div>
+        </div>
+
+        <!-- 4. СТРАНИЦА: О НАС -->
+        <div id="page-about" class="page">
+            <div class="card" style="text-align: center;">
+                <h2>Обо мне</h2>
+                <p style="line-height: 1.6; color: var(--text-muted); text-align: left;">Привет! Я профессиональный дизайнер и создатель этого фитнес-трекера. Я разрабатываю стильные, современные и удобные интерфейсы.</p>
+                
+                <h3 style="margin-top: 25px;">Мои контакты:</h3>
+                <a href="tel:+992112504410" class="phone-link"><i class="fa-solid fa-phone"></i> Позвонить: +992 11 250 4410</a>
+
+                <div class="social-links">
+                    <a href="https://www.tiktok.com/@tech_lab.x" target="_blank" class="social-btn" style="background: #000000;"><i class="fa-brands fa-tiktok"></i> TikTok</a>
+                    <a href="https://www.instagram.com/_mavlonov.10" target="_blank" class="social-btn" style="background: #e1306c;"><i class="fa-brands fa-instagram"></i> Instagram</a>
+                    <a href="https://www.facebook.com/14idwr4Lqbf" target="_blank" class="social-btn" style="background: #1877f2;"><i class="fa-brands fa-facebook"></i> Facebook</a>
+                    <a href="https://wa.me/992112504410" target="_blank" class="social-btn" style="background: #25d366;"><i class="fa-brands fa-whatsapp"></i> WhatsApp</a>
+                    <a href="https://t.me/techlab_x" target="_blank" class="social-btn" style="background: #24a1de;"><i class="fa-brands fa-telegram"></i> Telegram</a>
+                    <a href="mailto:dovud0300@gmail.com" class="social-btn" style="background: #ea4335;"><i class="fa-solid fa-envelope"></i> Gmail</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- 5. СТРАНИЦА: ПОМОЩЬ -->
+        <div id="page-help" class="page">
+            <div class="card">
+                <h2>Часто задаваемые вопросы (FAQ)</h2>
+                <div class="faq-item" onclick="toggleFaq(this)">
+                    <div class="faq-question">Как сохраняются мои тренировки? <span>▼</span></div>
+                    <div class="faq-answer">Они сохраняются в локальной памяти вашего браузера.</div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>Написать администратору</h2>
+                <div class="support-channels">
+                    <textarea id="support-msg" rows="3" placeholder="Опишите вашу проблему..."></textarea>
+                    <button class="btn-filter" onclick="sendToAdmin()">Отправить сообщение</button>
+                    <a href="https://wa.me/992112504410" target="_blank" class="social-btn" style="background: #25d366;"><i class="fa-brands fa-whatsapp"></i> Написать в WhatsApp</a>
+                    <a href="https://t.me/techlab_x" target="_blank" class="social-btn" style="background: #24a1de;"><i class="fa-brands fa-telegram"></i> Написать в Telegram</a>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- МОДАЛЬНОЕ ОКНО -->
+    <div class="overlay" id="exerciseModal">
+        <div class="card" style="width: 360px; margin-bottom: 0;">
+            <h3 style="margin-bottom: 15px; text-align: center;">Новая запись</h3>
+            
+            <div class="form-group">
+                <label>Упражнение:</label>
+                <select id="modal-exercise" onchange="checkExerciseType()">
+                    <option value="Турник 🏋️‍♂️">Турник 🏋️‍♂️</option>
+                    <option value="Брусья 🛑">Брусья 🛑</option>
+                    <option value="Отжимания 💪">Отжимания 💪</option>
+                    <option value="Приседания 🦵">Приседания 🦵</option>
+                    <option value="Планка ⏱️">Планка ⏱️</option>
+                    <option value="Вис на турнике ⏳">Вис на турнике ⏳</option>
+                    <option value="Бег 🏃‍♂️">Бег 🏃‍♂️</option>
+                    <option value="Пресс 🔥">Пресс 🔥</option>
+                    <option value="Канат 🧗‍♂️">Канат 🧗‍♂️</option>
+                </select>
+            </div>
+
+            <div class="form-group" id="group-count">
+                <label>Количество повторений (от 1 до 1000):</label>
+                <input type="number" id="modal-count" min="1" max="1000" value="10">
+            </div>
+
+            <div class="form-group" id="group-duration" style="display: none;">
+                <label>Время удержания (Минуты и Секунды):</label>
+                <div class="inputs-row">
+                    <input type="number" id="modal-min" min="0" max="60" value="1" placeholder="Мин">
+                    <input type="number" id="modal-sec" min="0" max="59" value="0" placeholder="Сек">
+                </div>
+            </div>
+
+            <div id="group-running" style="display: none;">
+                <div class="form-group">
+                    <label>Дистанция бега:</label>
+                    <div class="inputs-row">
+                        <input type="number" id="run-distance" min="1" value="1" placeholder="Число">
+                        <select id="run-unit" style="width: 140px;">
+                            <option value="км">Км (Километры)</option>
+                            <option value="м">м (Метры)</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Время бега (Часы / Минуты / Секунды):</label>
+                    <div class="inputs-row">
+                        <input type="number" id="run-hour" min="0" max="24" value="0" placeholder="Ч">
+                        <input type="number" id="run-min" min="0" max="59" value="10" placeholder="М">
+                        <input type="number" id="run-sec" min="0" max="59" value="0" placeholder="С">
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>Дата выполнения:</label>
+                <input type="date" id="modal-date">
+            </div>
+
+            <div class="form-group">
+                <label>Точное время внесения:</label>
+                <input type="time" id="modal-time">
+            </div>
+
+            <button class="btn-main" style="width: 100%; margin-top: 10px;" onclick="saveExerciseData()">Добавить</button>
+            <button class="btn-filter" style="width: 100%; border-color: #ef4444; color: #ef4444;" onclick="closeModal()">Отмена</button>
+        </div>
+    </div>
+
+    <!-- Подключение внешнего JavaScript сценария -->
+    <script src="script.js"></script>
+</body>
+</html>
