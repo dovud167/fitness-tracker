@@ -5,13 +5,13 @@ const SUPABASE_ANON_KEY = "sb_publishable_QU4QHXcLWqAKuUy9BQpW4Q_u5yN0MoW";
 // Инициализируем клиент базы данных
 const supabase = window.supabase ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY) : null;
 
-// Твоя база данных тренировок в памяти (оставляем как было)
+// Твоя база данных тренировок в памяти
 let dataBase = [];
 
-// --- БЛОК 2. ЛОГИКА АВТОРИЗАЦИИ (НОВАЯ) ---
+// --- БЛОК 2. ЛОГИКА АВТОРИЗАЦИИ (БЕЗОПАСНАЯ) ---
 document.addEventListener("DOMContentLoaded", () => {
     if (!supabase) {
-        console.error("Ошибка: Библиотека Supabase не загрузилась. Проверь тег <script> в index.html");
+        console.error("Ошибка: Библиотека Supabase не загрузилась.");
         return;
     }
 
@@ -23,7 +23,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const btnGoogleAuth = document.getElementById("btn-google-auth");
 
     // Отправка кода на Email
-    if (btnSendCode) {
+    if (btnSendCode && emailInput) {
         btnSendCode.addEventListener("click", async () => {
             const email = emailInput.value.trim();
             if (!email) {
@@ -37,17 +37,17 @@ document.addEventListener("DOMContentLoaded", () => {
 
             if (error) {
                 alert("Ошибка отправки кода: " + error.message);
-                btnSendCode.innerText = "Получить код";
+                btnSendCode.innerText = "📩 Получить код на Email";
                 btnSendCode.disabled = false;
             } else {
-                alert("Код успешно отправлен на твою почту! Проверь спам, если не пришло.");
+                alert("Код успешно отправлен на твою почту!");
                 btnSendCode.innerText = "Код отправлен";
             }
         });
     }
 
     // Проверка введенного кода из письма
-    if (btnVerifyCode) {
+    if (btnVerifyCode && codeInput && emailInput) {
         btnVerifyCode.addEventListener("click", async () => {
             const email = emailInput.value.trim();
             const token = codeInput.value.trim();
@@ -65,11 +65,11 @@ document.addEventListener("DOMContentLoaded", () => {
             });
 
             if (error) {
-                alert("Неверный код или срок его действия истёк: " + error.message);
-                btnVerifyCode.innerText = "Войти";
+                alert("Неверный код: " + error.message);
+                btnVerifyCode.innerText = "✅ Подтвердить код";
             } else {
                 alert("Авторизация успешна!");
-                checkUser(); // Обновляем экран
+                checkUser();
             }
         });
     }
@@ -88,15 +88,17 @@ document.addEventListener("DOMContentLoaded", () => {
     // Автоматическая проверка: вошел ли пользователь?
     async function checkUser() {
         const { data: { user } } = await supabase.auth.getUser();
-        const profileEmailText = document.getElementById("profile-email-text"); // Найди или добавь этот id в html, чтобы видеть email
+        const profileEmailText = document.getElementById("profile-email-text");
+        const loggedOutBlock = document.getElementById('profile-logged-out');
+        const loggedInBlock = document.getElementById('profile-logged-in');
 
         if (user) {
-            document.getElementById('profile-logged-out').style.display = 'none';
-            document.getElementById('profile-logged-in').style.display = 'block';
+            if (loggedOutBlock) loggedOutBlock.style.display = 'none';
+            if (loggedInBlock) loggedInBlock.style.display = 'block';
             if (profileEmailText) profileEmailText.innerText = user.email;
         } else {
-            document.getElementById('profile-logged-in').style.display = 'none';
-            document.getElementById('profile-logged-out').style.display = 'block';
+            if (loggedInBlock) loggedInBlock.style.display = 'none';
+            if (loggedOutBlock) loggedOutBlock.style.display = 'block';
         }
     }
     checkUser();
@@ -107,8 +109,13 @@ document.addEventListener("DOMContentLoaded", () => {
 function switchPage(pageName) {
     document.querySelectorAll('.page').forEach(page => page.classList.remove('active-page'));
     document.querySelectorAll('nav button').forEach(btn => btn.classList.remove('active'));
-    document.getElementById(`page-${pageName}`).classList.add('active-page');
-    document.getElementById(`nav-${pageName}`).classList.add('active');
+    
+    // Проверяем, существуют ли элементы, чтобы код не падал
+    const targetPage = document.getElementById(`page-${pageName}`);
+    const targetBtn = document.getElementById(`nav-${pageName}`);
+    
+    if (targetPage) targetPage.classList.add('active-page');
+    if (targetBtn) targetBtn.classList.add('active');
 }
 
 function checkExerciseType() {
@@ -118,16 +125,16 @@ function checkExerciseType() {
     const durationGroup = document.getElementById('group-duration');
     const runningGroup = document.getElementById('group-running');
 
-    countGroup.style.display = 'none';
-    durationGroup.style.display = 'none';
-    runningGroup.style.display = 'none';
+    if (countGroup) countGroup.style.display = 'none';
+    if (durationGroup) durationGroup.style.display = 'none';
+    if (runningGroup) runningGroup.style.display = 'none';
 
     if (exercise.includes("Бег")) {
-        runningGroup.style.display = 'block';
+        if (runningGroup) runningGroup.style.display = 'block';
     } else if (exercise.includes("Планка") || exercise.includes("Вис на турнике")) {
-        durationGroup.style.display = 'block';
+        if (durationGroup) durationGroup.style.display = 'block';
     } else {
-        countGroup.style.display = 'block';
+        if (countGroup) countGroup.style.display = 'block';
     }
 }
 
@@ -137,25 +144,22 @@ function openModal() {
     const year = now.getFullYear();
     const month = String(now.getMonth() + 1).padStart(2, '0');
     const day = String(now.getDate()).padStart(2, '0');
-    document.getElementById('modal-date').value = `${year}-${month}-${day}`;
-
-    const hours = String(now.getHours()).padStart(2, '0');
-    const minutes = String(now.getMinutes()).padStart(2, '0');
-    document.getElementById('modal-time').value = `${hours}:${minutes}`;
-
-    document.getElementById('modal-count').value = "10";
-    document.getElementById('modal-min').value = "1";
-    document.getElementById('modal-sec').value = "0";
-    document.getElementById('run-distance').value = "1";
-    document.getElementById('run-hour').value = "0";
-    document.getElementById('run-min').value = "10";
-    document.getElementById('run-sec').value = "0";
+    
+    const modalDate = document.getElementById('modal-date');
+    const modalTime = document.getElementById('modal-time');
+    
+    if (modalDate) modalDate.value = `${year}-${month}-${day}`;
+    if (modalTime) modalTime.value = `${now.getHours()}:${now.getMinutes()}`;
 
     checkExerciseType();
-    document.getElementById('exerciseModal').style.display = 'flex'; 
+    const modal = document.getElementById('exerciseModal');
+    if (modal) modal.style.display = 'flex'; 
 }
 
-function closeModal() { document.getElementById('exerciseModal').style.display = 'none'; }
+function closeModal() { 
+    const modal = document.getElementById('exerciseModal');
+    if (modal) modal.style.display = 'none'; 
+}
 
 function saveExerciseData() {
     const exercise = document.getElementById('modal-exercise').value;
@@ -226,7 +230,10 @@ function saveExerciseData() {
 
 function renderData() {
     const todayList = document.getElementById('today-list');
-    document.getElementById('profile-count').textContent = dataBase.length;
+    const profileCount = document.getElementById('profile-count');
+    if (profileCount) profileCount.textContent = dataBase.length;
+
+    if (!todayList) return;
 
     if(dataBase.length === 0) {
         todayList.innerHTML = `<p style="color: var(--text-muted);">За сегодня тренировок пока нет.</p>`;
@@ -243,14 +250,19 @@ function renderData() {
         `;
     });
 
-    filterData('all', document.querySelector('.btn-filter.active'));
+    const activeFilter = document.querySelector('.btn-filter.active');
+    filterData('all', activeFilter);
 }
 
 function filterData(range, btnElement) {
-    document.querySelectorAll('.btn-filter').forEach(b => b.classList.remove('active'));
-    if(btnElement) btnElement.classList.add('active');
+    if (btnElement) {
+        document.querySelectorAll('.btn-filter').forEach(b => b.classList.remove('active'));
+        btnElement.classList.add('active');
+    }
 
     const historyList = document.getElementById('history-list');
+    if (!historyList) return;
+
     if(dataBase.length === 0) {
         historyList.innerHTML = `<p style="color: var(--text-muted); text-align:center;">История пуста.</p>`;
         return;
@@ -288,10 +300,13 @@ function filterData(range, btnElement) {
 function toggleFaq(element) {
     const answer = element.querySelector('.faq-answer');
     const arrow = element.querySelector('span');
+    if(!answer) return;
     if(answer.style.display === 'block') {
-        answer.style.display = 'none'; arrow.textContent = '▼';
+        answer.style.display = 'none'; 
+        if (arrow) arrow.textContent = '▼';
     } else {
-        answer.style.display = 'block'; arrow.textContent = '▲';
+        answer.style.display = 'block'; 
+        if (arrow) arrow.textContent = '▲';
     }
 }
 
@@ -302,15 +317,12 @@ function sendToAdmin() {
     document.getElementById('support-msg').value = '';
 }
 
-// Старые функции симуляции заменяем на реальную работу с сервером
-function simulateLogin(method) {
-    // Больше не используется, так как теперь работает настоящий вход в Блоке 2
-}
+function simulateLogin(method) {}
 
 async function logout() {
     if (supabase) {
         await supabase.auth.signOut();
         alert("Вы вышли из системы");
-        window.location.reload(); // Перезагружаем страницу, чтобы сбросить экраны
+        window.location.reload();
     }
 }
