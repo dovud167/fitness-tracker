@@ -6,10 +6,6 @@
     <title>🏆 ProTrain — Твой Трекер Тренировок</title>
     <!-- Подключение настоящих иконок соцсетей (Font Awesome) -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
-    <!-- ПОДКЛЮЧЕНИЕ SUPABASE ДЛЯ РАБОТЫ ВХОДА (ДИЗАЙН НЕ МЕНЯЕТ) -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    
     <!-- Подключение внешних стилей CSS -->
     <link rel="stylesheet" href="style.css">
 </head>
@@ -61,29 +57,22 @@
 
         <!-- 3. СТРАНИЦА: ПРОФИЛЬ -->
         <div id="page-profile" class="page">
-            
-            <!-- БЛОК ПОЛЬЗОВАТЕЛЬ НЕ ВОШЕЛ (ДИЗАЙН ТВОЙ, КНОПКИ РАБОЧИЕ) -->
             <div id="profile-logged-out" class="card auth-container">
                 <h2>Личный Кабинет</h2>
                 <p style="color: var(--text-muted);">Вы не вошли в систему.</p>
                 <button class="btn-main" onclick="document.getElementById('auth-methods-block').style.display = 'flex'">Войти</button>
 
                 <div id="auth-methods-block" style="display: none; flex-direction: column; gap: 10px; max-width: 300px; margin: 20px auto 0;">
-                    <button id="btn-google-auth" class="btn-filter">🌐 Войти через Google</button>
-                    
-                    <input type="email" id="email-input" placeholder="Введите Email">
-                    <button id="btn-send-code" class="btn-filter">📩 Получить код на Email</button>
-                    
-                    <input type="text" id="code-input" placeholder="Код из письма">
-                    <button id="btn-verify-code" class="btn-filter" style="background: #28a745; color: white; border: none;">✅ Подтвердить код</button>
+                    <button class="btn-filter" onclick="simulateLogin('Google')">🌐 Войти через Google</button>
+                    <input type="email" id="auth-email" placeholder="Введите Email">
+                    <button class="btn-filter" onclick="simulateLogin('Email')">📩 Код на Email</button>
+                    <input type="tel" id="auth-phone" placeholder="+992 11 250 4410">
+                    <button class="btn-filter" onclick="simulateLogin('Телефон')">📱 Код по SMS</button>
                 </div>
             </div>
 
-            <!-- БЛОК ПОЛЬЗОВАТЕЛЬ ВОШЕЛ -->
             <div id="profile-logged-in" class="card" style="display: none;">
                 <h2>Ваш Профиль</h2>
-                <p style="color: var(--text-muted); margin-bottom: 5px;">Вы вошли как:</p>
-                <p id="profile-email-text" style="font-weight: bold; color: var(--accent-color); margin-bottom: 15px;"></p>
                 <p>Выполнено упражнений: <strong id="profile-count">0</strong></p>
                 <button class="btn-main" style="background: #ef4444; color: white;" onclick="logout()">Выйти</button>
             </div>
