@@ -4,20 +4,21 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>🏆 ProTrain — Твой Трекер Тренировок</title>
-    <!-- Подключение настоящих иконок соцсетей (Font Awesome) -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Подключение внешних стилей CSS -->
+    
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    
+    <script src="script.js" defer></script>
+
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-    <!-- ХЕДЕР -->
     <header>
         <h1>ProTrain Studio</h1>
-        <p>⚡ Преодолей себя сегодня. Результат будет завтра. ⚡</p>
+        <p>⚡ Преодолей себя сегодня. Resultat будет завтра. ⚡</p>
     </header>
 
-    <!-- НАВИГАЦИЯ -->
     <nav>
         <button onclick="switchPage('main')" id="nav-main" class="active">Главная</button>
         <button onclick="switchPage('all-exercises')" id="nav-all-exercises">Все тренировки</button>
@@ -26,10 +27,8 @@
         <button onclick="switchPage('help')" id="nav-help">Помощь</button>
     </nav>
 
-    <!-- ОСНОВНОЙ КОНТЕНТ -->
     <div class="container">
 
-        <!-- 1. СТРАНИЦА: ГЛАВНАЯ -->
         <div id="page-main" class="page active-page">
             <div class="card">
                 <h2>Тренировки за день</h2>
@@ -40,7 +39,6 @@
             <button class="btn-main" onclick="openModal()">➕ Добавить упражнение</button>
         </div>
 
-        <!-- 2. СТРАНИЦА: ВСЕ ТРЕНИРОВКИ -->
         <div id="page-all-exercises" class="page">
             <div class="card">
                 <h2>История прохождений</h2>
@@ -55,7 +53,6 @@
             </div>
         </div>
 
-        <!-- 3. СТРАНИЦА: ПРОФИЛЬ -->
         <div id="page-profile" class="page">
             <div id="profile-logged-out" class="card auth-container">
                 <h2>Личный Кабинет</h2>
@@ -63,22 +60,25 @@
                 <button class="btn-main" onclick="document.getElementById('auth-methods-block').style.display = 'flex'">Войти</button>
 
                 <div id="auth-methods-block" style="display: none; flex-direction: column; gap: 10px; max-width: 300px; margin: 20px auto 0;">
-                    <button class="btn-filter" onclick="simulateLogin('Google')">🌐 Войти через Google</button>
-                    <input type="email" id="auth-email" placeholder="Введите Email">
-                    <button class="btn-filter" onclick="simulateLogin('Email')">📩 Код на Email</button>
-                    <input type="tel" id="auth-phone" placeholder="+992 11 250 4410">
-                    <button class="btn-filter" onclick="simulateLogin('Телефон')">📱 Код по SMS</button>
+                    <button id="btn-google-auth" class="btn-filter">🌐 Войти через Google</button>
+                    
+                    <input type="email" id="email-input" placeholder="Введите Email">
+                    <button id="btn-send-code" class="btn-filter">📩 Получить код на Email</button>
+                    
+                    <input type="text" id="code-input" placeholder="Код из письма">
+                    <button id="btn-verify-code" class="btn-filter" style="background: #28a745; color: white; border: none;">✅ Подтвердить код</button>
                 </div>
             </div>
 
             <div id="profile-logged-in" class="card" style="display: none;">
                 <h2>Ваш Профиль</h2>
+                <p style="color: var(--text-muted); margin-bottom: 5px;">Вы вошли как:</p>
+                <p id="profile-email-text" style="font-weight: bold; color: var(--accent-color); margin-bottom: 15px;"></p>
                 <p>Выполнено упражнений: <strong id="profile-count">0</strong></p>
                 <button class="btn-main" style="background: #ef4444; color: white;" onclick="logout()">Выйти</button>
             </div>
         </div>
 
-        <!-- 4. СТРАНИЦА: О НАС -->
         <div id="page-about" class="page">
             <div class="card" style="text-align: center;">
                 <h2>Обо мне</h2>
@@ -98,7 +98,6 @@
             </div>
         </div>
 
-        <!-- 5. СТРАНИЦА: ПОМОЩЬ -->
         <div id="page-help" class="page">
             <div class="card">
                 <h2>Часто задаваемые вопросы (FAQ)</h2>
@@ -121,7 +120,6 @@
 
     </div>
 
-    <!-- МОДАЛЬНОЕ ОКНО -->
     <div class="overlay" id="exerciseModal">
         <div class="card" style="width: 360px; margin-bottom: 0;">
             <h3 style="margin-bottom: 15px; text-align: center;">Новая запись</h3>
@@ -190,7 +188,5 @@
         </div>
     </div>
 
-    <!-- Подключение внешнего JavaScript сценария -->
-    <script src="script.js"></script>
-</body>
+    </body>
 </html>
