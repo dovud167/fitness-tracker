@@ -1,4 +1,108 @@
+// --- БЛОК 1. ПОДКЛЮЧЕНИЕ К БАЗЕ ДАННЫХ SUPABASE ---
+const SUPABASE_URL = "https://rkurxleswixoxoigeese.supabase.co";
+const SUPABASE_ANON_KEY = "sb_publishable_QU4QHXcLWqAKuUy9BQpW4Q_u5yN0MoW";
+
+// Инициализируем клиент базы данных
+const supabase = window.supabase ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY) : null;
+
+// Твоя база данных тренировок в памяти (оставляем как было)
 let dataBase = [];
+
+// --- БЛОК 2. ЛОГИКА АВТОРИЗАЦИИ (НОВАЯ) ---
+document.addEventListener("DOMContentLoaded", () => {
+    if (!supabase) {
+        console.error("Ошибка: Библиотека Supabase не загрузилась. Проверь тег <script> в index.html");
+        return;
+    }
+
+    // Элементы интерфейса для входа
+    const emailInput = document.getElementById("email-input");
+    const codeInput = document.getElementById("code-input");
+    const btnSendCode = document.getElementById("btn-send-code");
+    const btnVerifyCode = document.getElementById("btn-verify-code");
+    const btnGoogleAuth = document.getElementById("btn-google-auth");
+
+    // Отправка кода на Email
+    if (btnSendCode) {
+        btnSendCode.addEventListener("click", async () => {
+            const email = emailInput.value.trim();
+            if (!email) {
+                alert("Пожалуйста, введи свой Email!");
+                return;
+            }
+            btnSendCode.innerText = "Отправка...";
+            btnSendCode.disabled = true;
+
+            const { error } = await supabase.auth.signInWithOtp({ email: email });
+
+            if (error) {
+                alert("Ошибка отправки кода: " + error.message);
+                btnSendCode.innerText = "Получить код";
+                btnSendCode.disabled = false;
+            } else {
+                alert("Код успешно отправлен на твою почту! Проверь спам, если не пришло.");
+                btnSendCode.innerText = "Код отправлен";
+            }
+        });
+    }
+
+    // Проверка введенного кода из письма
+    if (btnVerifyCode) {
+        btnVerifyCode.addEventListener("click", async () => {
+            const email = emailInput.value.trim();
+            const token = codeInput.value.trim();
+
+            if (!email || !token) {
+                alert("Введи Email и Код из письма!");
+                return;
+            }
+            btnVerifyCode.innerText = "Проверка...";
+
+            const { error } = await supabase.auth.verifyOtp({
+                email: email,
+                token: token,
+                type: 'magiclink'
+            });
+
+            if (error) {
+                alert("Неверный код или срок его действия истёк: " + error.message);
+                btnVerifyCode.innerText = "Войти";
+            } else {
+                alert("Авторизация успешна!");
+                checkUser(); // Обновляем экран
+            }
+        });
+    }
+
+    // Вход через Google
+    if (btnGoogleAuth) {
+        btnGoogleAuth.addEventListener("click", async () => {
+            const { error } = await supabase.auth.signInWithOAuth({
+                provider: 'google',
+                options: { redirectTo: window.location.origin }
+            });
+            if (error) alert("Ошибка входа через Google: " + error.message);
+        });
+    }
+
+    // Автоматическая проверка: вошел ли пользователь?
+    async function checkUser() {
+        const { data: { user } } = await supabase.auth.getUser();
+        const profileEmailText = document.getElementById("profile-email-text"); // Найди или добавь этот id в html, чтобы видеть email
+
+        if (user) {
+            document.getElementById('profile-logged-out').style.display = 'none';
+            document.getElementById('profile-logged-in').style.display = 'block';
+            if (profileEmailText) profileEmailText.innerText = user.email;
+        } else {
+            document.getElementById('profile-logged-in').style.display = 'none';
+            document.getElementById('profile-logged-out').style.display = 'block';
+        }
+    }
+    checkUser();
+});
+
+// --- БЛОК 3. ТВОЙ СТАРЫЙ ОРИГИНАЛЬНЫЙ КОД (БЕЗ ИЗМЕНЕНИЙ) ---
 
 function switchPage(pageName) {
     document.querySelectorAll('.page').forEach(page => page.classList.remove('active-page'));
@@ -198,13 +302,15 @@ function sendToAdmin() {
     document.getElementById('support-msg').value = '';
 }
 
+// Старые функции симуляции заменяем на реальную работу с сервером
 function simulateLogin(method) {
-    document.getElementById('profile-logged-out').style.display = 'none';
-    document.getElementById('profile-logged-in').style.display = 'block';
+    // Больше не используется, так как теперь работает настоящий вход в Блоке 2
 }
 
-function logout() {
-    document.getElementById('profile-logged-in').style.display = 'none';
-    document.getElementById('profile-logged-out').style.display = 'block';
-    document.getElementById('auth-methods-block').style.display = 'none';
+async function logout() {
+    if (supabase) {
+        await supabase.auth.signOut();
+        alert("Вы вышли из системы");
+        window.location.reload(); // Перезагружаем страницу, чтобы сбросить экраны
+    }
 }
