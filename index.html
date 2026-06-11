@@ -4,10 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>🏆 ProTrain — Твой Трекер Тренировок</title>
+    <!-- Иконки -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
+    <!-- Подключение библиотеки Supabase -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     
+    <!-- Твой скрипт с defer, чтобы он ждал загрузку страницы -->
     <script src="script.js" defer></script>
 
     <link rel="stylesheet" href="style.css">
@@ -29,6 +32,7 @@
 
     <div class="container">
 
+        <!-- СТРАНИЦА: ГЛАВНАЯ -->
         <div id="page-main" class="page active-page">
             <div class="card">
                 <h2>Тренировки за день</h2>
@@ -39,6 +43,7 @@
             <button class="btn-main" onclick="openModal()">➕ Добавить упражнение</button>
         </div>
 
+        <!-- СТРАНИЦА: ВСЕ ТРЕНИРОВКИ -->
         <div id="page-all-exercises" class="page">
             <div class="card">
                 <h2>История прохождений</h2>
@@ -53,6 +58,7 @@
             </div>
         </div>
 
+        <!-- СТРАНИЦА: ПРОФИЛЬ -->
         <div id="page-profile" class="page">
             <div id="profile-logged-out" class="card auth-container">
                 <h2>Личный Кабинет</h2>
@@ -79,6 +85,7 @@
             </div>
         </div>
 
+        <!-- СТРАНИЦА: О НАС -->
         <div id="page-about" class="page">
             <div class="card" style="text-align: center;">
                 <h2>Обо мне</h2>
@@ -98,6 +105,7 @@
             </div>
         </div>
 
+        <!-- СТРАНИЦА: ПОМОЩЬ -->
         <div id="page-help" class="page">
             <div class="card">
                 <h2>Часто задаваемые вопросы (FAQ)</h2>
@@ -120,6 +128,7 @@
 
     </div>
 
+    <!-- МОДАЛЬНОЕ ОКНО (ТЕПЕРЬ СТРОГО ВНУТРИ BODY) -->
     <div class="overlay" id="exerciseModal">
         <div class="card" style="width: 360px; margin-bottom: 0;">
             <h3 style="margin-bottom: 15px; text-align: center;">Новая запись</h3>
@@ -188,5 +197,5 @@
         </div>
     </div>
 
-    </body>
+</body>
 </html>
