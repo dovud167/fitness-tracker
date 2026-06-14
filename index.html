@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
+    <script src="script.js"></script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>🏆 ProTrain — Твой Трекер Тренировок</title>
@@ -8,7 +9,6 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Подключение внешних стилей CSS -->
     <link rel="stylesheet" href="style.css">
-    
 </head>
 <body>
 
@@ -59,18 +59,18 @@
         <!-- 3. СТРАНИЦА: ПРОФИЛЬ -->
         <div id="page-profile" class="page">
             <div id="profile-logged-out" class="card auth-container">
-                <h2>Личный Кабинет</h2>
-                <p style="color: var(--text-muted);">Вы не вошли в систему.</p>
-                <button class="btn-main" onclick="document.getElementById('auth-methods-block').style.display = 'flex'">Войти</button>
+    <h2>Личный Кабинет</h2>
+    <p style="color: var(--text-muted);">Вы не вошли в систему.</p>
+    <button class="btn-main" onclick="document.getElementById('auth-methods-block').style.display = 'flex'">Войти</button>
 
-                <div id="auth-methods-block" style="display: none; flex-direction: column; gap: 10px; max-width: 300px; margin: 20px auto 0;">
-                    <button class="btn-filter" onclick="simulateLogin('Google')">🌐 Войти через Google</button>
-                    <input type="email" id="auth-email" placeholder="Введите Email">
-                    <button class="btn-filter" onclick="simulateLogin('Email')">📩 Код на Email</button>
-                    <input type="tel" id="auth-phone" placeholder="+992 11 250 4410">
-                    <button class="btn-filter" onclick="simulateLogin('Телефон')">📱 Код по SMS</button>
-                </div>
-            </div>
+    <div id="auth-methods-block" style="display: none; flex-direction: column; gap: 10px; max-width: 300px; margin: 20px auto 0;">
+        <input type="email" id="email-input" placeholder="Введите Email">
+        <input type="text" id="code-input" placeholder="Код подтверждения">
+        <button class="btn-filter" id="btn-send-code">📩 Получить код на Email</button>
+        <button class="btn-filter" id="btn-verify-code">✅ Подтвердить код</button>
+        <button class="btn-filter" id="btn-google-auth">🌐 Войти через Google</button>
+    </div>
+</div>
 
             <div id="profile-logged-in" class="card" style="display: none;">
                 <h2>Ваш Профиль</h2>
@@ -192,7 +192,8 @@
     </div>
 
     <!-- Подключение внешнего JavaScript сценария -->
-     
-    <script src="script.js"></script>
+    
+   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
 </body>
 </html>
